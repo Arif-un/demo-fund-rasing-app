@@ -1,0 +1,1 @@
+const LOGO_VERITICAL_URI = 

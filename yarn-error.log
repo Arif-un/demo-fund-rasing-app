@@ -1,0 +1,65 @@
+Arguments: 
+  C:\Program Files\nodejs\node.exe C:\Program Files\nodejs\node_modules\yarn\bin\yarn.js add @expo-google-fonts/inter/useFonts
+
+PATH: 
+  C:\Users\Arifu\bin;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\local\bin;C:\Program Files\Git\usr\bin;C:\Program Files\Git\usr\bin;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\bin;C:\Users\Arifu\bin;C:\Program Files\Common Files\Oracle\Java\javapath;C:\Python310\Scripts;C:\Python310;C:\Python39\Scripts;C:\Python39;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0;C:\Windows\System32\OpenSSH;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\Intel\WiFi\bin;C:\Program Files\Common Files\Intel\WirelessCommon;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0;C:\WINDOWS\System32\OpenSSH;C:\Program Files\Git\cmd;C:\ProgramData\chocolatey\bin;C:\Program Files\dotnet;E:\RF\laragon\bin\php\php-7.4.10-nts-Win32-vc15-x64;C:\MinGW\bin;D:\Installed Software\MongoDB\Server\4.4\bin;C:\Android;C:\Program Files (x86)\GnuWin32\bin;C:\Program Files (x86)\dotnet;C:\Users\Arifu\.cargo\bin;C:\ProgramData\ComposerSetup\bin;C:\flutter\bin;C:\Program Files\PowerShell\7;C:\Users\Arifu\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\JFLEX\bin;C:\Program Files\Git\usr\bin\vendor_perl;C:\Program Files\Git\usr\bin\core_perl
+
+Yarn version: 
+  1.22.18
+
+Node version: 
+  16.14.0
+
+Platform: 
+  win32 x64
+
+Trace: 
+  Error: https://registry.yarnpkg.com/@expo-google-fonts%2finter/useFonts: Request "https://registry.yarnpkg.com/@expo-google-fonts%2finter/useFonts" returned a 405
+      at Request.params.callback [as _callback] (C:\Users\Arifu\AppData\Roaming\nvm\v16.14.0\node_modules\yarn\lib\cli.js:66147:18)
+      at Request.self.callback (C:\Users\Arifu\AppData\Roaming\nvm\v16.14.0\node_modules\yarn\lib\cli.js:140883:22)
+      at Request.emit (node:events:520:28)
+      at Request.<anonymous> (C:\Users\Arifu\AppData\Roaming\nvm\v16.14.0\node_modules\yarn\lib\cli.js:141855:10)
+      at Request.emit (node:events:520:28)
+      at IncomingMessage.<anonymous> (C:\Users\Arifu\AppData\Roaming\nvm\v16.14.0\node_modules\yarn\lib\cli.js:141777:12)
+      at Object.onceWrapper (node:events:639:28)
+      at IncomingMessage.emit (node:events:532:35)
+      at endReadableNT (node:internal/streams/readable:1346:12)
+      at processTicksAndRejections (node:internal/process/task_queues:83:21)
+
+npm manifest: 
+  {
+    "name": "fund-rasing",
+    "version": "1.0.0",
+    "main": "node_modules/expo/AppEntry.js",
+    "scripts": {
+      "start": "expo start",
+      "android": "expo start --android",
+      "ios": "expo start --ios",
+      "web": "expo start --web",
+      "eject": "expo eject"
+    },
+    "dependencies": {
+      "@react-native-firebase/app": "^14.5.1",
+      "expo": "~44.0.0",
+      "expo-font": "~10.0.4",
+      "expo-status-bar": "~1.2.0",
+      "native-base": "^3.3.7",
+      "react": "17.0.1",
+      "react-dom": "17.0.1",
+      "react-native": "0.64.3",
+      "react-native-drawer": "^2.5.1",
+      "react-native-paper": "^4.11.2",
+      "react-native-web": "0.17.1",
+      "react-router-native": "^6.2.2"
+    },
+    "devDependencies": {
+      "@babel/core": "^7.12.9"
+    },
+    "private": true
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
