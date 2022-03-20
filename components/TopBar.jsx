@@ -44,6 +44,20 @@ export default function TopBar({ title }) {
         >
           Login
         </Button>
+        <Button
+          icon="login"
+          contentStyle={s.btn}
+          onPress={() => navigate('/register')}
+        >
+          Register
+        </Button>
+        <Button
+          icon="login"
+          contentStyle={s.btn}
+          onPress={() => navigate('/approval')}
+        >
+          Charity Approval
+        </Button>
 
       </Animated.View>
       {drawer && (

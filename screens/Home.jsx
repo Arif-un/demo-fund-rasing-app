@@ -1,7 +1,10 @@
 import { Text, View, StyleSheet, ScrollView } from "react-native";
 import { Appbar, Button, IconButton } from "react-native-paper";
+import { useState, useEffect } from "react"
 import ListCard from "../components/ListCard";
 import TopBar from "../components/TopBar";
+import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+import { db, userDetailsCollection } from "../firebaseConfig";
 
 
 const ch = [
@@ -43,6 +46,19 @@ const ch = [
 ]
 
 export default function Home() {
+  const [charities, setCharities] = useState([])
+
+  useEffect(async () => {
+    const data = []
+    const usersDetails = await getDocs(collection(db, 'userDetails'))
+    usersDetails.forEach(doc => {
+      data.push({ ...doc.data(), id: doc.id })
+    })
+    setCharities(data)
+    console.log('============', data)
+  }, [])
+
+
   return (
     <>
       <TopBar title="Charity List" />

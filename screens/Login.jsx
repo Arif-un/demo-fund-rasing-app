@@ -1,13 +1,11 @@
 import { useState } from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
-import { Button, IconButton, TextInput } from "react-native-paper";
-import { useFonts, Inter_900Black, Inter_600SemiBold } from '@expo-google-fonts/inter';
+import { Button, TextInput } from "react-native-paper";
 import { Link, useNavigate } from "react-router-native";
 
-export default function Login() {
+export default function Register() {
   const [form, setForm] = useState({ email: '', password: '' })
   const navigate = useNavigate();
-  useFonts({ Inter_900Black, Inter_600SemiBold })
 
   return (
     <>
@@ -22,6 +20,7 @@ export default function Login() {
       <View style={s.container}>
         <Image source={require('../assets/logo.png')} style={s.logo} />
         <Text style={s.subTitle}>Login Here</Text>
+
         <TextInput
           label="Email"
           value={form.email}
@@ -41,7 +40,7 @@ export default function Login() {
           onChangeText={text => setForm({ ...form, password: text })}
         />
         <Button style={{ marginTop: 12 }} mode="contained">Login</Button>
-        <Text>Not have any account ? Register as a Charity.</Text>
+        <Text style={s.registerText}>Not have any account ? <Link to="/register"><Text style={s.registerLink}>Register a new charity</Text></Link>.</Text>
       </View>
     </>
   )
@@ -49,13 +48,10 @@ export default function Login() {
 
 const s = StyleSheet.create({
   container: {
-    // backgroundColor: '#ff8282',
     height: '100%',
     flex: 1,
     justifyContent: 'center',
     padding: 30
-    // flexDirection
-    // alignItems: 'center',
   },
   title: {
     fontSize: 24,
@@ -63,7 +59,6 @@ const s = StyleSheet.create({
     textAlign: "center",
     color: '#2f0064',
     marginBottom: 5,
-    // fontFamily: 'Inter_900Black',
   },
   subTitle: {
     fontSize: 16,
@@ -71,12 +66,19 @@ const s = StyleSheet.create({
     textAlign: "center",
     color: '#574968',
     marginBottom: 15,
-    // fontFamily: 'Inter_600SemiBold',
   },
   logo: {
     width: 120,
     height: 120,
     marginLeft: 'auto',
     marginRight: 'auto'
+  },
+  registerText: {
+    textAlign: 'center',
+    marginTop: 10
+  },
+  registerLink: {
+    color: '#1100ff',
+    marginTop: 4
   }
 })
