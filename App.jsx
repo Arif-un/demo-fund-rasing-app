@@ -6,6 +6,8 @@ import Login from './screens/Login';
 import { DefaultTheme, Drawer, Provider as PaperProvider } from 'react-native-paper'
 import { useEffect, useState } from 'react';
 import * as Font from 'expo-font';
+import Register from './screens/Register';
+import CharityApproval from './screens/CharityApproval';
 const theme = {
   ...DefaultTheme,
   roundness: 10,
@@ -62,6 +64,8 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/approval" element={<CharityApproval />} />
           </Routes>
           {/* <Routes>
             <Route path="/" element={<Home />} />
