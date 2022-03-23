@@ -3,7 +3,7 @@ import { Appbar, Button, IconButton } from "react-native-paper";
 import { useState, useEffect } from "react"
 import ListCard from "../components/ListCard";
 import TopBar from "../components/TopBar";
-import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
 import { db, userDetailsCollection } from "../firebaseConfig";
 
 
@@ -50,12 +50,12 @@ export default function Home() {
 
   useEffect(async () => {
     const data = []
-    const usersDetails = await getDocs(collection(db, 'userDetails'))
+    const q = query(collection(db, 'userDetails'), where('status', '==', 'active'))
+    const usersDetails = await getDocs(q)
     usersDetails.forEach(doc => {
       data.push({ ...doc.data(), id: doc.id })
     })
     setCharities(data)
-    console.log('============', data)
   }, [])
 
 
@@ -63,8 +63,13 @@ export default function Home() {
     <>
       <TopBar title="Charity List" />
       <ScrollView style={{ flex: 1 }}>
-        {ch.map((itm, i) => (
-          <ListCard key={`lc-${i + 9}`} img={itm.img} title={itm.title} subTitle={itm.subTitle} />
+        {charities.map((itm, i) => (
+          <ListCard
+            key={`lc-${i + 9}`}
+            img={itm.img}
+            title={itm.name}
+            subTitle={itm.slogan}
+          />
         ))}
       </ScrollView>
     </>
