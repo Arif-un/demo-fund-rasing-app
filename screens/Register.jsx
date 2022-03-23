@@ -282,7 +282,7 @@ export default function Registerr() {
           onChangeText={text => setForm({ ...form, location: text })}
         />
         <TextInput
-          label="phone"
+          label="Phone"
           value={form.phone}
           mode="outlined"
           dense
