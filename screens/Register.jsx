@@ -10,40 +10,21 @@ export default function Registerr() {
   const [form, setForm] = useState({})
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
+
   useEffect(() => {
-    auth.onAuthStateChanged(user => {
-      if (user) {
-        navigate("/")
+    onAuthStateChanged(auth, user => {
+      if (!user.id) {
+        navigate("/profile")
       }
     })
   }, [])
 
   const handleRegister = async () => {
-    // try {
-    //   d.forEach(async (itm, i) => {
-    //     const docRef = await addDoc(userDetailsCollection, {
-    //       userUid: itm.userUid || '',
-    //       name: itm.name || '',
-    //       slogan: itm.slogan || '',
-    //       description: itm.description || '',
-    //       location: itm.location || '',
-    //       phone: itm.phone || '',
-    //       role: 'user',
-    //       status: 'pending',
-    //       img: img[i] || '',
-    //     })
-    //   })
 
-    //   setLoading(false)
-    //   console.log("Document written with ID: ", docRef.id);
-    // } catch (e) {
-    //   setLoading(false)
-    //   console.error("Error adding document: ", e);
-    // }
 
     if (form.password !== form.confirmPassword) return alert('Password not match')
     setLoading(true)
-    createUserWithEmailAndPassword(auth, 'asdsaddnnasdssasa@mailsac.com', 'adsdasda')
+    createUserWithEmailAndPassword(auth, form.email, form.password)
       .then(async (userCredential) => {
         try {
           const docRef = await addDoc(userDetailsCollection, {
@@ -57,7 +38,6 @@ export default function Registerr() {
             status: 'pending'
           });
           setLoading(false)
-          console.log("Document written with ID: ", docRef.id);
         } catch (e) {
           setLoading(false)
           console.error("Error adding document: ", e);

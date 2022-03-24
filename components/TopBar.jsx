@@ -2,27 +2,51 @@ import { useFonts } from "@expo-google-fonts/inter/useFonts";
 import { Animated, Image, Text, View } from "react-native";
 import { Button, IconButton } from "react-native-paper";
 import { TouchableOpacity } from "react-native";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-native"
+import { app, auth, db } from '../firebaseConfig'
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import { collection, getDocs, query, where } from "firebase/firestore";
 
-export default function TopBar({ title }) {
+export default function TopBar({ title, color = '#fff' }) {
   const [loaded] = useFonts({ p_semi: require("../assets/fonts/Poppins-SemiBold.ttf") })
   const [drawer, setDrawer] = useState(false)
   const navigate = useNavigate()
   const slideAnim = useRef(new Animated.Value(-250)).current
-
+  const [user, setUser] = useState({})
+  // const [userDetails, setUserDetails] = useState({})
   const handleDraweer = (isOpen) => () => {
     setDrawer(isOpen)
     Animated.timing(slideAnim, { toValue: isOpen ? 0 : -250, duration: 300, useNativeDriver: true }).start();
   }
+
+  useEffect(() => {
+    onAuthStateChanged(auth, async user => {
+      if (user) {
+        const q = query(collection(db, 'userDetails'), where('userUid', '==', user.uid))
+        const userDetails = await getDocs(q)
+
+        const userDetail = userDetails.docs?.[0]?.data()
+        const id = userDetails?.docs?.[0]?.id
+        setUser({ ...user, ...userDetail, id })
+      }
+    })
+  }, [])
+
   if (!loaded) return <Text>Loading...</Text>
 
+  const logout = async () => {
+    await signOut(auth)
+    navigate('/')
+    setDrawer(false)
+  }
 
   return (
     <>
-      <View style={{ flex: 1, flexDirection: 'row', paddingTop: 20, alignItems: 'center', maxHeight: 80, }}>
+      <View style={{ flex: 1, flexDirection: 'row', paddingTop: 20, alignItems: 'center', maxHeight: 80, backgroundColor: color }}>
         <IconButton icon="menu" style={{ position: 'absolute', top: '40%' }} onPress={handleDraweer(true)} />
-        <Text style={{ marginLeft: 'auto', marginRight: 'auto', fontSize: 18, fontFamily: 'p_semi' }}>{title}</Text>
+        <Text style={{ marginLeft: 'auto', marginRight: 'auto',left:20, fontSize: 18, fontFamily: 'p_semi' }}>{title}</Text>
+        <IconButton onPress={() => navigate(-1)} icon={'arrow-left'} />
       </View>
       <Animated.View
         style={{
@@ -32,32 +56,76 @@ export default function TopBar({ title }) {
       >
         <Image
           style={s.drawerImg}
-          // width={100}
-          // height={20}
           source={{ uri: 'http://www.innovairre.com/wp-content/uploads/2015/07/Fundly-logo-web-e1438032255736.png' }}
         />
 
+        <Text style={{ color: '#696969', marginLeft: 15 }}>{user.email}</Text>
+
         <Button
-          icon="login"
+          icon="home"
           contentStyle={s.btn}
-          onPress={() => navigate('/login')}
+          onPress={() => navigate('/')}
         >
-          Login
+          Home
         </Button>
-        <Button
-          icon="login"
-          contentStyle={s.btn}
-          onPress={() => navigate('/register')}
-        >
-          Register
-        </Button>
-        <Button
-          icon="login"
-          contentStyle={s.btn}
-          onPress={() => navigate('/approval')}
-        >
-          Charity Approval
-        </Button>
+        {!user.id &&
+          <Button
+            icon="login-variant"
+            contentStyle={s.btn}
+            onPress={() => navigate('/login')}
+          >
+            Login
+          </Button>
+        }
+
+
+        {!user.id && (
+          <Button
+            icon="account-plus"
+            contentStyle={s.btn}
+            onPress={() => navigate('/register')}
+          >
+            Register
+          </Button>
+        )}
+
+        {user && user.role === 'admin' && (
+          <Button
+            icon="check-decagram"
+            contentStyle={s.btn}
+            onPress={() => navigate('/approval')}
+          >
+            Charity Approval
+          </Button>
+        )}
+
+        {user.uid && (
+          <>
+            <Button
+              icon="account"
+              contentStyle={s.btn}
+              onPress={() => navigate('/profile')}
+            >
+              Profile
+            </Button>
+
+            <Button
+              icon="format-list-bulleted"
+              contentStyle={s.btn}
+              onPress={() => navigate(`/donors-list/${user.uid}`)}
+            >
+              Donors List
+            </Button>
+
+            <Button
+              icon="logout-variant"
+              contentStyle={s.btn}
+              onPress={logout}
+            >
+              Logout
+            </Button>
+          </>
+        )}
 
       </Animated.View>
       {drawer && (

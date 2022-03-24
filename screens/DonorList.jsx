@@ -2,47 +2,77 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import { Text, View, StyleSheet, ScrollView } from "react-native";
 import { Appbar, Button, IconButton } from "react-native-paper";
 import TopBar from "../components/TopBar";
-import { db } from "../firebaseConfig";
+import { auth, db } from "../firebaseConfig";
 import { useState, useEffect } from "react";
 import StatusCard from "../components/StatusCard";
 import { Image } from "react-native";
+import { useParams } from "react-router-native";
+import { onAuthStateChanged } from "firebase/auth";
 
 export default function DonorList() {
-  const [refetchData, setRefetchData] = useState(false)
+  const { id } = useParams()
+  const [donors, setDonors] = useState([])
 
   useEffect(async () => {
-    const data = []
-    const usersDetails = await getDocs(collection(db, 'userDetails'))
-    usersDetails.forEach(doc => {
-      data.push({ ...doc.data(), id: doc.id })
+    onAuthStateChanged(auth, async user => {
+      if (!user) {
+        navigate("/login")
+      }
+      console.log(user.uid)
+      const data = []
+      const q = query(collection(db, 'donations'), where('charityId', '==', user.uid))
+      const usersDetails = await getDocs(q)
+      usersDetails.forEach(doc => {
+        data.push({ ...doc.data(), id: doc.id })
+      })
+      setDonors(data)
     })
-    // setCharities(data)
-  }, [refetchData])
+
+  }, [])
 
   return (
     <>
       <TopBar title="Donor List" />
       <ScrollView style={{ flex: 1 }}>
-        <View style={s.donorCard}>
-          <View style={s.profileWrp}>
-            <Image
-              style={s.profileImg}
-              source={{ uri: 'https://www.slazzer.com/static/images/home-page/banner-transparent-bg.jpg' }}
-            />
+
+        {!donors.length && <Text style={{ textAlign: 'center', fontSize: 20 }}>No data found.</Text>}
+
+        {donors.map(donor => (
+          <View style={s.donorCard}>
+            <View style={s.profileWrp}>
+              <Image
+                style={s.profileImg}
+                source={{ uri: donor.img }}
+              />
+              <View>
+                <Text style={{ fontSize: 16 }}>{donor.donor}</Text>
+                <Text style={{ fontSize: 14, fontFamily: 'Poppins-Bold' }}>{donor.amount} Tk</Text>
+                <Text style={{
+                  fontSize: 11,
+                  borderRadius: 5,
+                  backgroundColor: '#e7ebee',
+                  width: 40,
+                  paddingVertical: 2,
+                  paddingHorizontal: 4,
+                  textAlign: 'center'
+                }}>{donor.method}</Text>
+              </View>
+            </View>
             <View>
-              <Text style={{ fontSize: 16 }}>Adasd asd sdasd</Text>
-              <Text style={{ fontSize: 14, fontFamily: 'Poppins-Bold' }}>2000 Tk</Text>
-              <Text style={{ fontSize: 12, borderRadius: 5, backgroundColor: '#e7ebee', width: 50, padding: 3 }}>Card</Text>
+              <Text style={{ color: '#757575' }}>{donor.date}</Text>
+              <Text style={{ fontSize: 10, color: '#8b8b8b' }}>{donor.time}</Text>
             </View>
           </View>
-          <View></View>
-        </View>
+        ))}
       </ScrollView>
     </>
   )
 }
 const s = StyleSheet.create({
   donorCard: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     borderWidth: 2,
     borderColor: '#e2e9f3',
     padding: 10,

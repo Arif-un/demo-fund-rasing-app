@@ -1,5 +1,5 @@
 import { Text, View, StyleSheet, ScrollView } from "react-native";
-import { Appbar, Button, IconButton } from "react-native-paper";
+import { Appbar, Button, IconButton, TextInput } from "react-native-paper";
 import { useState, useEffect } from "react"
 import ListCard from "../components/ListCard";
 import TopBar from "../components/TopBar";
@@ -47,10 +47,14 @@ const ch = [
 
 export default function Home() {
   const [charities, setCharities] = useState([])
+  const [search, setSearch] = useState([])
 
   useEffect(async () => {
     const data = []
-    const q = query(collection(db, 'userDetails'), where('status', '==', 'active'))
+    const q = query(collection(db, 'userDetails'),
+      where('status', '==', 'active'),
+      where('role', '==', 'user'),
+    )
     const usersDetails = await getDocs(q)
     usersDetails.forEach(doc => {
       data.push({ ...doc.data(), id: doc.id })
@@ -58,17 +62,63 @@ export default function Home() {
     setCharities(data)
   }, [])
 
+  const handleSearch = (val) => {
+    const searchData = []
+    if (val === '') {
+      setSearch([])
+      return
+    }
+    charities.map(charity => {
+      if (charity?.name.toLowerCase().includes(val.toLowerCase())) {
+        searchData.push(charity)
+      }
+    })
+    charities.map(charity => {
+      if (charity?.location.toLowerCase().includes(val.toLowerCase())) {
+        searchData.push(charity)
+      }
+    })
+    setSearch(searchData)
+  }
 
   return (
     <>
       <TopBar title="Charity List" />
       <ScrollView style={{ flex: 1 }}>
-        {charities.map((itm, i) => (
+        <TextInput
+          label="Search"
+          right={<TextInput.Icon name="magnify" />}
+          mode="outlined"
+          dense
+          style={{
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            width: '88%',
+          }}
+          onChangeText={handleSearch}
+        />
+        {!search.length && charities.map((itm) => (
           <ListCard
-            key={`lc-${i + 9}`}
+            key={itm.id}
+            id={itm.id}
+            userUid={itm.userUid}
             img={itm.img}
             title={itm.name}
             subTitle={itm.slogan}
+            balance={itm.balance}
+            goal={itm.goal}
+          />
+        ))}
+        {search?.map((itm) => (
+          <ListCard
+            key={itm.id}
+            id={itm.id}
+            userUid={itm.userUid}
+            img={itm.img}
+            title={itm.name}
+            subTitle={itm.slogan}
+            balance={itm.balance}
+            goal={itm.goal}
           />
         ))}
       </ScrollView>

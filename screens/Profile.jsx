@@ -1,30 +1,43 @@
 import { TextInput, Button } from "react-native-paper"
-import { StyleSheet, Text, View, Image, } from "react-native"
+import { StyleSheet, Text, View, Image, Slider } from "react-native"
 import { useState, useEffect } from 'react'
 import { useNavigate } from "react-router-native"
 import { collection, doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore"
-import { db } from "../firebaseConfig"
+import { auth, db } from "../firebaseConfig"
 import { async } from "@firebase/util"
 import TopBar from "../components/TopBar"
+import { onAuthStateChanged } from "firebase/auth"
 
-export default function Profile({ id }) {
+export default function Profile({ userId }) {
   const [form, setForm] = useState({})
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
   const handleProfileUpdate = async () => {
     setLoading(true)
-    const docRef = doc(db, 'userDetails', '3ZDt58To58HzSScKzZaw')
-    console.log({ form })
+    const docRef = doc(db, 'userDetails', form.id)
     await updateDoc(docRef, form)
     setLoading(false)
   }
 
   useEffect(async () => {
-    const userDetails = await getDoc(doc(db, 'userDetails', '3ZDt58To58HzSScKzZaw'))
-    setForm(userDetails.data())
-  }, [])
+    onAuthStateChanged(auth, user => {
+      if(!user) {
+        navigate("/login")
+      }
+    })
+    const q = query(collection(db, 'userDetails'), where('userUid', '==', userId))
+    const userDetails = await getDocs(q)
 
+    const userDetail = userDetails.docs?.[0]?.data()
+    const id = userDetails?.docs?.[0]?.id
+    setForm({ ...userDetail, id })
+    return () => {
+      setForm({})
+    }
+
+
+  }, [])
   return (
     <>
       <TopBar title="Profile" color="#00b7ff" />
@@ -37,13 +50,21 @@ export default function Profile({ id }) {
 
         <View style={s.inputsWrapper}>
 
+          <Text style={{
+            fontSize: 20,
+            fontWeight: 'bold',
+            marginBottom: 10,
+            marginTop: 10,
+            textAlign: 'center',
+          }}>Fund: {form.balance}</Text>
+
           <TextInput
             label="Name of Charity"
             value={form.name}
-            mode="outined"
             dense
             left={<TextInput.Icon name="hand-heart" />}
             onChangeText={text => setForm({ ...form, name: text })}
+            mode="outlined"
           />
           <TextInput
             label="Slogan"
@@ -79,6 +100,15 @@ export default function Profile({ id }) {
             left={<TextInput.Icon name="phone" />}
             onChangeText={text => setForm({ ...form, phone: text })}
           />
+          <TextInput
+            label="Fund Raise Goal"
+            value={form.goal}
+            mode="outlined"
+            dense
+            left={<TextInput.Icon name="currency-bdt" />}
+            onChangeText={text => setForm({ ...form, goal: text })}
+          />
+          {/* <Slider /> */}
 
           <Button
             loading={loading}
@@ -86,7 +116,7 @@ export default function Profile({ id }) {
             style={{ marginTop: 12 }}
             mode="contained"
           >
-            Register
+            Update Profile
           </Button>
         </View>
       </View>

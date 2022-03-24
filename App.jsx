@@ -8,6 +8,20 @@ import { useEffect, useState } from 'react';
 import * as Font from 'expo-font';
 import Register from './screens/Register';
 import CharityApproval from './screens/CharityApproval';
+import Profile from './screens/Profile';
+import CharityDetails from './screens/CharityDetails';
+import DonorList from './screens/DonorList';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from './firebaseConfig';
+import { LogBox } from 'react-native';
+import { BackHandler } from 'react-native-web';
+LogBox.ignoreLogs([
+  'Setting a timer',
+  'AsyncStorage',
+  "[Unhandled promise rejection: TypeError: undefined is not an object (evaluating 'window.document.getElementsByTagName')]",
+  '/indexedDB',
+  'Warning:',
+]);
 const theme = {
   ...DefaultTheme,
   roundness: 10,
@@ -19,13 +33,10 @@ const theme = {
 }
 
 export default function App() {
-  const [active, setActive] = useState('')
+  const [user, setUser] = useState({})
+
   async function loadFonts() {
     await Font.loadAsync({
-      // Load a font `Montserrat` from a static resource
-      // Montserrat: require('./assets/fonts/Poppins-Bold.ttf'),
-
-      // Any string can be used as the fontFamily name. Here we use an object to provide more control
       'Poppins-Regular': {
         uri: require('./assets/fonts/Poppins-Regular.ttf'),
         display: Font.FontDisplay.FALLBACK,
@@ -39,6 +50,18 @@ export default function App() {
   }
   useEffect(() => {
     loadFonts()
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        setUser(user)
+      } else {
+        setUser({})
+      }
+    })
+
+    BackHandler.addEventListener('hardwareBackPress', function () {
+      alert('back button pressed')
+      return false
+    })
   }, [])
 
 
@@ -47,39 +70,17 @@ export default function App() {
       <NativeRouter>
         <View style={styles.container}>
           <StatusBar style="auto" />
-          {/* <Home/> */}
-          {/* <Drawer.Section title="Some title">
-            <Drawer.Item
-              label="First Item"
-              active={active === 'first'}
-              onPress={() => setActive('first')}
-            />
-            <Drawer.Item
-              label="Second Item"
-              active={active === 'second'}
-              onPress={() => setActive('second')}
-            />
-          </Drawer.Section> */}
 
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/approval" element={<CharityApproval />} />
+            <Route path="/profile" element={<Profile userId={user.uid} />} />
+            <Route path="/charity-details/:id" element={<CharityDetails />} />
+            <Route path="/donors-list/:id" element={<DonorList />} />
           </Routes>
-          {/* <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-          </Routes> */}
-          {/* <Text style={styles.container}>aasdfasdfasdfasdfsdf</Text>
-          <Link
-            to="/login"
-            underlayColor="#f0f4f7"
-            style={styles.navItem}
-          >
-            <Text>About</Text>
-          </Link>
-          <StatusBar style="auto" /> */}
+
         </View>
       </NativeRouter>
     </PaperProvider>

@@ -1,11 +1,20 @@
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
 import { Button, TextInput } from "react-native-paper";
 import { Link, useNavigate } from "react-router-native";
+import { auth } from "../firebaseConfig";
 
 export default function Register() {
   const [form, setForm] = useState({ email: '', password: '' })
-  const navigate = useNavigate();
+  const navigate = useNavigate()
+
+  const handleSignIn = async () => {
+    const res = await signInWithEmailAndPassword(auth, form.email, form.password)
+    if (res.user) {
+      navigate('/profile')
+    }
+  }
 
   return (
     <>
@@ -39,7 +48,7 @@ export default function Register() {
           style={{ marginTop: 5 }}
           onChangeText={text => setForm({ ...form, password: text })}
         />
-        <Button style={{ marginTop: 12 }} mode="contained">Login</Button>
+        <Button onPress={handleSignIn} style={{ marginTop: 12 }} mode="contained">Login</Button>
         <Text style={s.registerText}>Not have any account ? <Link to="/register"><Text style={s.registerLink}>Register a new charity</Text></Link>.</Text>
       </View>
     </>

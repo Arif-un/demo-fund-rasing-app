@@ -24,4 +24,5 @@ export const app = initializeApp(firebaseConfig)
 export const db = getFirestore(app)
 export const auth = getAuth(app)
 export const userDetailsCollection = collection(db, 'userDetails')
-const analytics = getAnalytics(app);
+export const donationsCollection = collection(db, 'donations')
+// const analytics = getAnalytics(app);
